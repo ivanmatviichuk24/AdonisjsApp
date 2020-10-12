@@ -1,0 +1,25 @@
+<nav class="side-navbar">
+    <!-- Sidebar Header-->
+    <div class="sidebar-header d-flex align-items-center">
+    <!-- <div class="avatar"><img src="http://localhost/img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle"></div>-->
+      <div class="title">
+        <h1 class="h4">{{auth.user.firstname}} {{auth.user.lastname}}</h1>
+        <p></p>
+      </div>
+    </div>
+    <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+    <ul class="list-unstyled">
+      <li><a href="{{route('index')}}"> <i class="icon-home"></i>Home </a></li>
+      <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-grid"></i>Tables </a>
+        <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+          <li id="users"><a href="{{ route('users') }}"> <i class="icon-user"></i>Users</a></li>
+          @can('read_roles')
+            <li id="roles"><a href="{{ route('roles') }}"> <i class="icon-list"></i>Roles</a></li>
+          @endcan
+        </ul>
+      </li>
+      @can('read_articles')
+        <li><a href="{{route('articles')}}"> <i class="icon-padnote"></i>Articles </a></li>
+      @endcan
+    </ul>
+  </nav>

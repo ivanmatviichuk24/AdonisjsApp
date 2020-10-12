@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    @include('layouts.blog.partials.head')    
+  <body>
+    <div class="main-wrapper">
+        <!-- Main Navbar-->
+        @include('layouts.blog.partials.sidebar')
+        @!section('content') 
+        <!-- Page Footer-->
+        @include('layouts.blog.partials.footer')  
+    </div>
+    @include('layouts.blog.partials.dependencies')  
+  </body>
+</html>

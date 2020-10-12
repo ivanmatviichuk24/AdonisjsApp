@@ -1,0 +1,128 @@
+@layout('layouts.dashboard.main')
+
+@section('content')
+
+
+
+
+
+
+@!component('layouts.dashboard.partials.createUserModal', {roles: roles})
+
+
+@!component('layouts.dashboard.partials.editUserModal', {roles: roles})
+
+
+    <div class="table-container">
+        <table class="table  table-striped" id="users-table">
+            <thead>
+                <tr>
+                    <th>email</th>
+                    <th>firstname</th>
+                    <th>lastname</th>
+                    <th>position</th>
+                    <th>office</th>
+                    <th>role</th>
+                    @can('delete_users or update_users')
+                        <th>actions</th>
+                    @endcan
+                </tr>
+            </thead>
+            <tbody class="table-body">    
+            </tbody>
+          </table>
+    </div>
+
+
+    <script> 
+
+    
+window.onload = () => {
+
+    rowCallback = (row, data) => {
+        $(row).find('button:contains(Edit)').on('click', (e) => {
+            $('#editUserModal').modal('show');
+            const form = $('#editUserForm');
+            ['email', 'firstname', 'lastname', 'position', 'office'].map((key) => form.find("input[name*='" + key + "']").val(data[key]))
+            form.find('select[name*="role"]').val(data.roles[0].slug);
+            $('#editUserModal').find('form').attr('action', '/dashboard/users/edit/' + data.id);
+        })
+    }
+
+
+const table = $('#users-table').DataTable({
+    responsive: true,
+    processing: true,
+    serverSide: true,
+    ajax: {
+        "url": "/dashboard/users/data",
+        "dataType": "json",
+    },
+    columns: [
+        { data: "email" },
+        { data: "firstname" },
+        { data: "lastname" },
+        { data: "position" },
+        { data: "office" },
+        { 
+            data: "roles[].slug", 
+            serchable: false, 
+            orderable: false,
+        },
+        {
+            data: null,
+            orderable: false,
+            render: function(data, type, row) {
+                let result = '';
+                @can('update_users')
+                    result +=  '<button class="btn btn-sm btn-warning">Edit</button>';
+                @endcan
+                @can('delete_users')
+                    result += '<a href="/dashboard/users/delete/' + data.id + '"><button class="btn btn-sm btn-danger">Delete</button></a>'
+                @endcan
+                return result;
+            }
+        }
+    ],
+    searchPanes: {
+        viewTotal: true,
+        orderable: false,
+        clear: false,
+        columns: [3, 4],
+        dtOpts: {
+            select: {
+                style: 'multi'
+            }
+        },
+        layout: "columns-1",
+    },
+    "initComplete": function (settings, json) {
+        $(".dtsp-searchPanes ").appendTo($('.side-navbar'));
+        $(".dtsp-panes").addClass('d-none');
+    },
+    language: {
+        searchPanes: {
+            countFiltered: '{shown}'
+        }
+    },
+    scrollX: false,
+    dom: 'PBlfrtip',
+    rowCallback: rowCallback,
+    buttons: [
+        @can('create_users')
+        {
+            text: "Add",
+            className: "btn btn-primary",
+            action: function (e, dt, node, config) {
+                $('#createUserModal').modal('show');
+            }
+        }
+        @endcan
+    ]
+});
+}
+
+</script>
+
+@endsection
+

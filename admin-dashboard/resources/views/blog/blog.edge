@@ -1,0 +1,61 @@
+@layout('layouts.blog.main')
+
+@section('content')
+	<section class="cta-section theme-bg-light py-5">
+		<div class="container text-center">
+			<h2 class="heading">DevBlog - A Blog Template Made For Developers</h2>
+			<div class="intro">Welcome to my blog. Subscribe and get my latest blog post in your inbox.</div>
+			<form class="signup-form form-inline justify-content-center pt-3">
+				<div class="form-group">
+					<label class="sr-only" for="semail">Your email</label>
+					<input type="email" id="semail" name="semail1" class="form-control mr-md-1 semail" placeholder="Enter email">
+				</div>
+				<button type="submit" class="btn btn-primary">Subscribe</button>
+			</form>
+		</div><!--//container-->
+	</section>
+	<section class="blog-list px-3 py-5 p-md-5">
+		<div class="container" id="blog-container">
+			<form class="form-inline" action="/blog" enctype="application/x-www-form-urlencoded">
+				<div class="form-group mx-sm-3 mb-2">
+				<input type="text" class="form-control" name="search" placeholder="Search" value="{{search}}">
+				</div>
+				<button type="submit" class="btn btn-primary mb-2">Search</button>
+			</form>
+			@each((article, name) in data)
+				<div class="item mb-5">
+					<div class="media">
+					<img class="mr-3 img-fluid post-thumb d-none d-md-flex" src="{{article.image}}" alt="image">
+						<div class="media-body">
+						<h3 class="title mb-1"><a href="/blog/articles/{{article.slug}}">{{article.title}}</a></h3>
+						<div class="intro">{{article.short_text}}</div>
+							<a class="more-link" href="/blog/articles/{{article.slug}}">Read more &rarr;</a>
+						</div><!--//media-body-->
+					</div><!--//media-->
+				</div><!--//item-->		
+			@endeach		
+		</div>
+	</section>
+	<nav aria-label="Page navigation example">
+		<ul class="pagination justify-content-center">
+			@if(pages.page - 1 > 0)
+				<li class="page-item">
+					<a class="page-link" href="?search={{search}}&page={{pages.page - 1}}" tabindex="-1">Previous</a>
+			  	</li>
+			@endif
+			@if(data.length)
+				<li class="page-item disabled">
+				<li class="page-item"><a class="page-link" href="?search={{search}}&page={{pages.page}}">{{pages.page}}</a></li>
+			  	</li>
+			@endif
+		  
+		  	@if(pages.lastPage - pages.page > 0)
+		  		<li class="page-item">
+					<a class="page-link" href="?search={{search}}&page={{pages.page + 1}}">Next</a>
+			  	</li>
+			@endif
+		  
+		</ul>
+	  </nav>
+
+@endsection

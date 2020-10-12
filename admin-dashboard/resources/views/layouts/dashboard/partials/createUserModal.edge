@@ -1,0 +1,97 @@
+    <!-- Modal -->
+    <div class="modal fade" id="createUserModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Create User</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <form method="POST" action="/dashboard/users/create" id="createUserForm">
+            <div class="modal-body">
+                <div class="card-body">
+                      <div class="form-group">
+                        <label class="form-control-label" for="email">Email</label>
+                        <input type="email" name="email"  placeholder="Email Address" class="form-control">
+                        <div class="invalid-feedback d-none" id='emailCreateFeedback'></div>
+                      </div>
+                      <div class="form-group">      
+                        <label for="password" class="form-control-label">Password</label>
+                        <input type="password" placeholder="Password" name="password" class="form-control">
+                        <div class="invalid-feedback d-none" id='passwordCreateFeedback'></div>
+                      </div>
+                      <div class="form-group">      
+                        <label for="firstname" class="form-control-label">Firstname</label>
+                        <input type="text" placeholder="Firstname" name="firstname" class="form-control">
+                        <div class="invalid-feedback d-none" id='firstnameCreateFeedback'></div>
+                      </div>
+                      <div class="form-group">      
+                        <label for="lastname" class="form-control-label">Lastname</label>
+                        <input type="text" placeholder="Lastname" name="lastname" class="form-control">
+                        <div class="invalid-feedback d-none" id='lastnameCreateFeedback'></div>
+                      </div>
+                      <div class="form-group">      
+                        <label for="position" class="form-control-label">Position</label>
+                        <input type="text" placeholder="position" name="position" class="form-control">
+                        <div class="invalid-feedback d-none" id='positionCreateFeedback'></div>
+                      </div> 
+                      <div class="form-group">      
+                        <label for="office" class="form-control-label">Office</label>
+                        <input type="text" placeholder="office" name="office" class="form-control">
+                        <div class="invalid-feedback d-none" id='officeCreateFeedback'></div>
+                      </div>   
+                      <div class="form-group">      
+                        <label for="office" class="form-control-label">Role</label>
+                        <select class="custom-select mr-sm-2" name="role">
+                            <option selected>Choose...</option>
+                            @each((role) in roles)
+                            <option value="{{role}}">{{role}}</option>
+                            @endeach 
+                          </select>
+                        <div class="invalid-feedback d-none" id='roleCreateFeedback'></div>
+                      </div>                          
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" >Add</button>
+            </div>
+        </form>
+        </div>
+        </div>
+    </div>
+
+<script>
+  $('#createUserForm').on('submit', async (e) => {
+    e.preventDefault();
+    const form = $('#createUserForm');
+
+    const formData = new FormData(form[ 0 ]);
+
+    const response = await fetch('http://localhost/dashboard/users/create', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if(result.success) {
+      const table = $('#users-table').DataTable();
+      table.ajax.reload();
+      $('#createUserModal').modal('hide');
+    } else {      
+      const ids = result.errorMessages.map((message) => {
+        const id = '#' + message.field + 'CreateFeedback';
+        $(id).removeClass('d-none').addClass('d-block').text(message.message)
+        return id;
+      });
+      form.find('.invalid-feedback').not(ids.join(', ')).removeClass('d-block').addClass('d-none');
+    }
+  })
+
+  $('#createUserModal').on('hidden.bs.modal', function (e) {
+      $('#createUserModal').find('.invalid-feedback').removeClass('d-block').addClass('d-none');
+      $('#createUserForm').trigger("reset");
+  })
+</script>

@@ -1,0 +1,114 @@
+@layout('layouts.dashboard.main')
+
+@section('content')
+
+<script src="https://cdn.tiny.cloud/1/sbm3o7r35tbwfjniwxt4sbmv2ne2jh9y315eosta14x1jw0f/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+@!component('layouts.dashboard.partials.createArticleModal')
+
+@!component('layouts.dashboard.partials.editArticleModal')
+
+    <div class="table-container">
+        <table class="table  table-striped w-100" id="articles-table">
+            <thead>
+              <tr>
+                <th>slug</th>
+                <th>title</th> 
+                <th>image</th>           
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-body">
+            </tbody>
+          </table>
+    </div>
+
+<script>     
+window.onload = () => {
+
+    rowCallback = (row, data) => {
+        $(row).find('button:contains(Edit)').on('click', (e) => {
+            $('#editArticleModal').modal('show');
+            const form = $('#editArticleForm');
+            ['title'].map((key) => form.find("input[name*='" + key + "']").val(data[key]));
+            ['short_text'].map((key) => form.find("textarea[name*='" + key + "']").val(data[key]));
+            $(tinymce.get('editArticleFullText').getBody()).html(data.full_text);
+            $('#editArticleModal').find('form').attr('action', '/dashboard/articles/edit/' + data.id);
+        })
+        $(row).find('button:contains(Delete)').on('click', async (e) => {
+            await $.ajax('/dashboard/articles/delete/' + data.id)
+            table.ajax.reload();
+        })
+    }
+
+    const table = $('#articles-table').DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            "url": "/dashboard/articles/data",
+            "dataType": "json",
+        },
+        columns: [
+            {data: 'slug'},
+            {data: 'title'},
+            {
+                data: 'image',
+                render: function ( data, type, row, meta ) {
+                    const href = window.location.origin + data
+                    return '<img src="'+ data +'" width="50%"></img>'
+                }
+            },
+            { 
+                data: null,
+                serchable: false, 
+                orderable: false,
+                render: function(data, type, row) {
+                let result = '';
+                @can('update_articles')
+                    result +=  '<button class="btn btn-sm btn-warning">Edit</button>';
+                @endcan
+                @can('delete_articles')
+                    result += '<button class="btn btn-sm btn-danger">Delete</button>'
+                @endcan
+                return result;
+            }
+            }
+        ],
+        scrollX: false,
+        dom: 'Blfrtip',
+        rowCallback: rowCallback,
+        buttons: [
+                @can('create_roles')
+                    {
+                        text: "Add",
+                        className: "btn btn-primary",
+                        action: function (e, dt, node, config) {
+                            $('#createArticleModal').modal('show');
+                        }
+                    }
+                @endcan
+        ]
+    });
+
+}
+
+
+// Prevent bootstrap dialog from blocking focusin
+$(document).on('focusin', function(e) {
+    if ($(e.target).closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length) {
+		e.stopImmediatePropagation();
+	}
+});
+
+$('#open').click(function() {
+	$("#dialog").dialog({
+		width: 800,
+		modal: true
+	});
+});
+
+</script>
+
+@endsection
+

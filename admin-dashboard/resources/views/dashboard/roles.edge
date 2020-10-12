@@ -1,0 +1,86 @@
+@layout('layouts.dashboard.main')
+
+@section('content')
+
+
+
+@!component('layouts.dashboard.partials.createRoleModal', {permissions: permissions})
+
+@!component('layouts.dashboard.partials.editRoleModal', {permissions: permissions})
+
+    <div class="table-container">
+        <table class="table  table-striped w-100" id="roles-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-body">
+            </tbody>
+          </table>
+    </div>
+
+<script>     
+window.onload = () => {
+
+    rowCallback = (row, data) => {
+        $(row).find('button:contains(Edit)').on('click', (e) => {
+            $('#editRoleModal').modal('show');
+            const form = $('#editRoleForm');
+            ['name', 'slug', 'description'].map((key) => form.find("input[name*='" + key + "']").val(data[key]))
+            form.find('input[name*="permissions[]"]').val(data.permissions.map(permission =>  permission.slug));
+            $('#editRoleModal').find('form').attr('action', '/dashboard/roles/edit/' + data.id);
+        })
+    }
+
+    const table = $('#roles-table').DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            "url": "/dashboard/roles/data",
+            "dataType": "json",
+        },
+        columns: [
+            { data: "name" },
+            { data: "description" },
+            { 
+                data: null,
+                serchable: false, 
+                orderable: false,
+                render: function(data, type, row) {
+                let result = '';
+                @can('update_roles')
+                    result +=  '<button class="btn btn-sm btn-warning">Edit</button>';
+                @endcan
+                @can('delete_roles')
+                    result += '<a href="/dashboard/roles/delete/' + data.id + '"><button class="btn btn-sm btn-danger">Delete</button></a>'
+                @endcan
+                return result;
+            }
+            }
+        ],
+        scrollX: false,
+        dom: 'Brtp',
+        rowCallback: rowCallback,
+        buttons: [
+                @can('create_roles')
+                    {
+                        text: "Add",
+                        className: "btn btn-primary",
+                        action: function (e, dt, node, config) {
+                            $('#createRoleModal').modal('show');
+                        }
+                    }
+                @endcan
+        ]
+    });
+
+}
+
+</script>
+
+@endsection
+

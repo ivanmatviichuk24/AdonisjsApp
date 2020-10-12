@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    @include('layouts.dashboard.partials.head')
+    @include('layouts.dashboard.partials.dependencies')  
+  <body>
+    <div class="page">
+      <!-- Main Navbar-->
+      @include('layouts.dashboard.partials.header')
+      <div class="page-content d-flex align-items-stretch"> 
+        <!-- Side Navbar -->
+        @include('layouts.dashboard.partials.sidebar')      
+        <div class="content-inner">
+          <!-- Page Header-->
+          <header class="page-header">
+            <div class="container-fluid">
+              <h2 class="no-margin-bottom">Dashboard</h2>
+            </div>
+          </header>
+          <div class="main-content" id="main">
+            @!section('content') 
+          </div>
+          <!-- Page Footer-->
+          @include('layouts.dashboard.partials.footer')  
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

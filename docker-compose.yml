@@ -1,0 +1,24 @@
+version: "3"
+services: 
+    backend: 
+        build: ./admin-dashboard/
+        container_name: admin-backend
+        command: bash -c "sleep 7 && adonis migration:refresh && adonis seed --files='IndexSeeder.js' && pm2-runtime start ecosystem.config.js"
+        volumes: 
+           - ./admin-dashboard:/usr/src/app
+        depends_on: 
+            - db
+    nginx: 
+        build: ./nginx
+        container_name: admin-nginx
+        ports: 
+            - 80:80
+        depends_on: 
+            - backend
+    db: 
+        image: postgres
+        environment:
+            POSTGRES_DB: admin-dashboard 
+            POSTGRES_PASSWORD: ivan24
+        ports: 
+            - 6543:5432

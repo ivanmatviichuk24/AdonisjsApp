@@ -1,0 +1,119 @@
+    <!-- Modal -->
+<div class="modal fade" id="createArticleModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create Article</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <form id="createArticleForm">
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Title: </label>
+                        <input type="text" placeholder="title" class="form-control" name="title">
+                        <div class="invalid-feedback d-none" id="titleCreateFeedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Slug: </label>
+                        <input type="text" placeholder="slug" class="form-control" name="slug">
+                        <div class="invalid-feedback d-none" id="slugCreateFeedback"></div>
+                    </div>
+                    <div class="form-group">       
+                        <label>Short text: </label>
+                        <textarea class="form-control" name="short_text" rows="5"></textarea>
+                        <div class="invalid-feedback d-none" id="short_textCreateFeedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Article image: </label>
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="image">
+                        <div class="invalid-feedback d-none" id="imageCreateFeedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Full text: </label>
+                        <textarea name="full_text" id="createArticleFullText" rows="2">
+                        </textarea>
+                        <div class="invalid-feedback d-none" id="full_textCreateFeedback"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" >Add</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+
+
+<script>
+    $('#createArticleForm').on('submit', async (e) => {
+        e.preventDefault();
+        tinymce.triggerSave();
+        const form = $('#createArticleForm');
+    
+        const formData = new FormData(form[ 0 ]);
+    
+        const response = await fetch(window.location.origin + '/dashboard/articles/create', {
+        method: 'POST',
+        body: formData
+        });
+    
+        const result = await response.json();
+    
+        if(result.success) {
+        const table = $('#articles-table').DataTable();
+        table.ajax.reload();
+        $('#createArticleModal').modal('hide');
+        } else {      
+        const ids = result.errorMessages.map((message) => {
+            const id = '#' + message.field + 'CreateFeedback';
+            $(id).removeClass('d-none').addClass('d-block').text(message.message)
+            return id;
+        });
+        form.find('.invalid-feedback').not(ids.join(', ')).removeClass('d-block').addClass('d-none');
+        }
+    })
+    
+    $('#createArticleModal').on('hidden.bs.modal', function (e) {
+        $('#createArticleModal').find('.invalid-feedback').removeClass('d-block').addClass('d-none');
+        $('#createArticleForm').trigger("reset");
+    })
+</script>
+
+
+<script>
+    tinymce.init({
+    selector: '#createArticleFullText',
+    plugins: 'a11ychecker advcode casechange formatpainter linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable image imagetools',
+    toolbar: 'a11ycheck  casechange checklist code formatpainter pageembed permanentpen table image',
+    toolbar_mode: 'floating',
+    height: 700,
+    images_upload_url: '/dashboard/articles/images',
+
+    images_upload_handler: async function (blobInfo, success, failure) {
+        console.log(blobInfo.filename())
+        const formData = new FormData();
+        formData.append('image', blobInfo.blob(), blobInfo.filename());
+        formData.append('name','Ivan');
+
+
+
+        await fetch(window.location.origin + '/dashboard/articles/images', {
+            method: 'POST',
+            body: formData
+        });
+
+
+    setTimeout(function () {
+      success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
+    }, 2000);
+  },
+  file_picker_types: 'image',
+  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    });
+</script>
