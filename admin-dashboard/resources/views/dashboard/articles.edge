@@ -12,10 +12,12 @@
         <table class="table  table-striped w-100" id="articles-table">
             <thead>
               <tr>
-                <th>slug</th>
-                <th>title</th> 
-                <th>image</th>           
-                <th>Actions</th>
+                <th>Id</th>
+                <th>Slug</th>
+                <th>Title</th> 
+                <th>Type</th>
+                <th>Image</th>           
+                <th>Actions</th>               
               </tr>
             </thead>
             <tbody class="table-body">
@@ -30,10 +32,11 @@ window.onload = () => {
         $(row).find('button:contains(Edit)').on('click', (e) => {
             $('#editArticleModal').modal('show');
             const form = $('#editArticleForm');
-            ['title'].map((key) => form.find("input[name*='" + key + "']").val(data[key]));
+            ['title', 'slug'].map((key) => form.find("input[name*='" + key + "']").val(data[key]));
             ['short_text'].map((key) => form.find("textarea[name*='" + key + "']").val(data[key]));
             $(tinymce.get('editArticleFullText').getBody()).html(data.full_text);
             $('#editArticleModal').find('form').attr('action', '/dashboard/articles/edit/' + data.id);
+            $('#editteArticlePreviewImage').attr('src', data.image);
         })
         $(row).find('button:contains(Delete)').on('click', async (e) => {
             await $.ajax('/dashboard/articles/delete/' + data.id)
@@ -50,8 +53,10 @@ window.onload = () => {
             "dataType": "json",
         },
         columns: [
+            {data: 'id'},
             {data: 'slug'},
             {data: 'title'},
+            {data: 'type'},
             {
                 data: 'image',
                 render: function ( data, type, row, meta ) {

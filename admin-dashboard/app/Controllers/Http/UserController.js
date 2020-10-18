@@ -7,16 +7,6 @@ const DataTablesService = use('DataTables');
 
 class UserController {
 
-    async renderRegister({ view }) {
-        return view.render('dashboard.register');
-    }
-
-    async register({ request, response, auth }) {
-        const data = request.only(['email', 'password', 'firstname', 'lastname', 'office', 'position']);
-        const user = await User.create(data);
-        await auth.authenticator('session').remember(true).login(user);
-        return response.route('index');
-    }
     async renderUsers({ view }) {
         const roles = await Role.all();
         return view.render('dashboard.users', { roles: roles.rows.map(role => role.slug) });

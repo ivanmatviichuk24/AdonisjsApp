@@ -27,9 +27,15 @@
                         <textarea class="form-control" name="short_text" rows="5"></textarea>
                         <div class="invalid-feedback d-none" id="short_textEditFeedback"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Article image: </label>
-                        <input type="file" class="form-control-file"  name="image">
+                    <div class="form-group" style="height: 30vh;">
+                        <p><label for="exampleFormControlFile1">Article image: </label></p>
+                        <span class="h-75 " id="editArticlePreviewImageContainer">
+                        <img class="h-100" src="" id="editteArticlePreviewImage"/>
+                        <button type="button" class="close" aria-label="Close" id="editArticlePreviewImageButton">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </span>
+                        <input type="file" class="form-control-file d-none" id="editArticleFileInput" name="image">
                         <div class="invalid-feedback d-none" id="imageEditFeedback"></div>
                     </div>
                     <div class="form-group">
@@ -50,6 +56,22 @@
     </div>
 </div>
 <script>
+
+$('#editArticleFileInput').on('input', (e) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $('#editArticlePreviewImageContainer').removeClass('d-none')
+            $('#editArticlePreviewImage').attr('src', e.target.result)
+        }
+        reader.readAsDataURL(e.target.files[0]);
+        $(e.target).addClass('d-none');
+    })
+
+    $('#editArticlePreviewImageButton').on('click', (e) => {
+        $('#editArticleFileInput').removeClass('d-none').val('');
+        $('#editArticlePreviewImageContainer').addClass('d-none');
+    })
+
     $('#editArticleForm').on('submit', async (e) => {
         e.preventDefault();
         tinymce.triggerSave();
@@ -81,6 +103,8 @@
     $('#editArticleModal').on('hidden.bs.modal', function (e) {
         $('#editArticleModal').find('.invalid-feedback').removeClass('d-block').addClass('d-none');
         $('#editArticleForm').trigger("reset");
+        $('#editArticleFileInput').addClass('d-none');
+        $('#editArticlePreviewImageContainer').removeClass('d-none');
     })
     </script>
 
@@ -93,5 +117,25 @@
         tinycomments_mode: 'embedded',
         tinycomments_author: 'Author name',
         height: 700,
+        relative_urls : false,
+        images_upload_handler: async function (blobInfo, success, failure) {
+        const formData = new FormData();
+        formData.append('image', blobInfo.blob(), blobInfo.filename());
+
+        const response = await fetch(window.location.origin + '/dashboard/articles/images', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if(result.success) {
+            success(result.location)
+          } else {      
+            failure('HTTP Error: ')
+          }
+
+        },
+        file_picker_types: 'image',
         }); 
 </script>

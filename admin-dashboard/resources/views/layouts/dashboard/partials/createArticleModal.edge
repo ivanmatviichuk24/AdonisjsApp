@@ -26,9 +26,15 @@
                         <textarea class="form-control" name="short_text" rows="5"></textarea>
                         <div class="invalid-feedback d-none" id="short_textCreateFeedback"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">Article image: </label>
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="image">
+                    <div class="form-group" style="height: 30vh;">
+                        <p><label for="exampleFormControlFile1">Article image: </label></p>
+                        <span class="h-75 d-none" id="createArticlePreviewImageContainer">
+                        <img class="h-100" src="" id="createArticlePreviewImage"/>
+                        <button type="button" class="close" aria-label="Close" id="createArticlePreviewImageButton">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </span>
+                        <input type="file" class="form-control-file" id="createArticleFileInput" name="image">
                         <div class="invalid-feedback d-none" id="imageCreateFeedback"></div>
                     </div>
                     <div class="form-group">
@@ -36,6 +42,22 @@
                         <textarea name="full_text" id="createArticleFullText" rows="2">
                         </textarea>
                         <div class="invalid-feedback d-none" id="full_textCreateFeedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <h4>Resource: </h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="type"  value="article" checked>
+                        <label class="form-check-label">
+                          Article
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="type" value="info">
+                        <label class="form-check-label">
+                          Info
+                        </label>
+                      </div>
+                      <div class="invalid-feedback d-none" id="typeCreateFeedback"></div>
                     </div>
                 </div>
             </div>
@@ -51,6 +73,22 @@
 
 
 <script>
+    $('#createArticleFileInput').on('input', (e) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $('#createArticlePreviewImageContainer').removeClass('d-none')
+            $('#createArticlePreviewImage').attr('src', e.target.result)
+        }
+        reader.readAsDataURL(e.target.files[0]);
+        $(e.target).addClass('d-none');
+    })
+
+    $('#createArticlePreviewImageButton').on('click', (e) => {
+        $('#createArticleFileInput').removeClass('d-none').val('');
+        $('#createArticlePreviewImageContainer').addClass('d-none');
+    })
+
+
     $('#createArticleForm').on('submit', async (e) => {
         e.preventDefault();
         tinymce.triggerSave();
@@ -82,6 +120,8 @@
     $('#createArticleModal').on('hidden.bs.modal', function (e) {
         $('#createArticleModal').find('.invalid-feedback').removeClass('d-block').addClass('d-none');
         $('#createArticleForm').trigger("reset");
+        $('#createArticleFileInput').removeClass('d-none');
+        $('#createArticlePreviewImageContainer').addClass('d-none');
     })
 </script>
 
@@ -94,26 +134,26 @@
     toolbar_mode: 'floating',
     height: 700,
     images_upload_url: '/dashboard/articles/images',
-
+    relative_urls : false,
     images_upload_handler: async function (blobInfo, success, failure) {
-        console.log(blobInfo.filename())
         const formData = new FormData();
         formData.append('image', blobInfo.blob(), blobInfo.filename());
-        formData.append('name','Ivan');
 
-
-
-        await fetch(window.location.origin + '/dashboard/articles/images', {
+        const response = await fetch(window.location.origin + '/dashboard/articles/images', {
             method: 'POST',
             body: formData
         });
 
+        const result = await response.json();
 
-    setTimeout(function () {
-      success('http://moxiecode.cachefly.net/tinymce/v9/images/logo.png');
-    }, 2000);
-  },
-  file_picker_types: 'image',
-  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        if(result.success) {
+            success(result.location)
+          } else {      
+            failure('HTTP Error: ')
+          }
+
+    },
+    file_picker_types: 'image',
     });
+
 </script>

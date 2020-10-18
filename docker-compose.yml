@@ -2,15 +2,15 @@ version: "3"
 services: 
     backend: 
         build: ./admin-dashboard/
-        container_name: admin-backend
-        command: bash -c "sleep 7 && adonis migration:refresh && adonis seed --files='IndexSeeder.js' && pm2-runtime start ecosystem.config.js"
+        container_name: admin-backend-1
+        command: bash -c "sleep 7 && adonis migration:refresh && adonis seed --files='IndexSeeder.js'  && pm2-runtime start ecosystem.config.js"
         volumes: 
            - ./admin-dashboard:/usr/src/app
         depends_on: 
             - db
     nginx: 
         build: ./nginx
-        container_name: admin-nginx
+        container_name: admin-nginx-1
         ports: 
             - 80:80
         depends_on: 

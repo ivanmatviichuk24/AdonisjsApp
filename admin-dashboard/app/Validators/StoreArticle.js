@@ -7,7 +7,8 @@ class StoreArticle {
       slug: 'required|slug|unique:articles',
       short_text: 'required|string',
       full_text: 'required|string',
-      image: 'required|file|file_ext:png,jpg,jpeg,JPG|file_size:2mb|file_types:image'
+      image: 'required|file|file_ext:png,jpg,jpeg,JPG|file_size:2mb|file_types:image',
+      type: 'required|in:article,info'
     }
   }
   get validateAll() {

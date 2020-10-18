@@ -9,17 +9,17 @@
     </div>
     <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
     <ul class="list-unstyled">
-      <li><a href="{{route('index')}}"> <i class="icon-home"></i>Home </a></li>
-      <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-grid"></i>Tables </a>
+      <li><a href="{{route('index')}}"> <i class="fas fa-home"></i>Home </a></li>
+      <li><a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="fas fa-table"></i>Tables </a>
         <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
-          <li id="users"><a href="{{ route('users') }}"> <i class="icon-user"></i>Users</a></li>
+          <li id="users"><a href="{{ route('users') }}"> <i class="fas fa-users"></i>Users</a></li>
           @can('read_roles')
-            <li id="roles"><a href="{{ route('roles') }}"> <i class="icon-list"></i>Roles</a></li>
+            <li id="roles"><a href="{{ route('roles') }}"> <i class="fas fa-users-cog"></i></i>Roles</a></li>
           @endcan
         </ul>
       </li>
       @can('read_articles')
-        <li><a href="{{route('articles')}}"> <i class="icon-padnote"></i>Articles </a></li>
+        <li><a href="{{route('articles')}}"> <i class="fas fa-newspaper"></i>Articles </a></li>
       @endcan
     </ul>
   </nav>

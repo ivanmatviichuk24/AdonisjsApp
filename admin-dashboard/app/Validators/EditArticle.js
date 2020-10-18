@@ -6,6 +6,7 @@ class EditArticle {
         const image = this.ctx.request.file('image');
         const validations = {
             title: `required|string|unique:articles,title,id,${parseInt(id)}`,
+            slug: `required|string|unique:articles,slug,id,${parseInt(id)}`,
             short_text: 'required|string',
             full_text: 'required|string'
         }

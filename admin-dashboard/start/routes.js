@@ -90,12 +90,23 @@ Route.group(() => {
         .validator('EditArticle')
         .middleware(['can:update_articles']);
 
-    Route.post("/dashboard/articles/images/", "ArticleController.uploadImage")
-        .middleware(['can:(update_articles || create_articles)']);
+
+
 
     Route.get("/dashboard/articles/delete/:id", "ArticleController.delete")
         .middleware(['can:delete_articles']);
 }).middleware(['auth'])
+
+
+Route.group(() => {
+
+    Route.post("/dashboard/articles/images/", "AttachmentController.uploadImage")
+        .middleware(['can:(update_articles || create_articles)']);
+
+    Route.delete("/dashboard/articles/images/", "AttachmentController.deleteImage")
+        .middleware(['can:(update_articles || create_articles)']);
+});
+
 
 
 
@@ -106,7 +117,9 @@ Route.group(() => {
 
     Route.get('/blog/articles/:slug', 'BlogController.renderArticle').as('blog-article');
 
-    Route.get('/blog/about', 'BlogController.renderAbout').as('about');
+    Route.get('/blog/not-found', 'BlogController.articleNotFound').as('blog-article-not-found');
+
+    Route.get('/blog/:slug', 'BlogController.renderInfo').as('info');
 
 
 });
@@ -120,8 +133,5 @@ Route.group(() => {
 
     Route.post('/dashboard/users/login', 'UserController.login').validator('LoginUser');
 
-    Route.get('/dashboard/users/register', 'UserController.renderRegister').as('register');
-
-    Route.post('/dashboard/users/register', 'UserController.register').validator('StoreUser');
 }).middleware(['guest']);
 

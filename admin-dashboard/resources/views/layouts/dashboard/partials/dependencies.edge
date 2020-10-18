@@ -1,9 +1,7 @@
 <!-- Bootstrap CSS-->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-<!-- Font Awesome CSS-->
-{{ style('vendor/font-awesome/css/font-awesome.min.css') }}
-<!-- Fontastic Custom icon font-->
-{{ style('css/fontastic.css') }}
+<!-- Font Awesome-->
+<script src="https://kit.fontawesome.com/5b9421e568.js" crossorigin="anonymous"></script>
 <!-- Google fonts - Poppins -->
 {{ style('https://fonts.googleapis.com/css?family=Poppins:300,400,700') }}
 <!-- theme stylesheet-->
@@ -16,21 +14,17 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 <!-- JavaScript files-->
-<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-{{-- script('vendor/jquery/jquery.min.js') --}}
-{{ script('vendor/popper.js/umd/popper.min.js') }}
+{{--<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>  --}}
+{{ script('vendor/jquery/jquery.min.js') }}
 {{ script('vendor/bootstrap/js/bootstrap.min.js') }}
-{{ script('vendor/jquery.cookie/jquery.cookie.js') }}
-{{ script('vendor/jquery-validation/jquery.validate.min.js') }}
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.22/b-1.6.4/r-2.2.6/sl-1.3.1/datatables.min.css"/>
+
+{{ style('css/datatables/datatables.min.css') }}
+
  
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.22/b-1.6.4/r-2.2.6/sl-1.3.1/datatables.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.0/css/searchPanes.bootstrap4.css"/>
- 
-{{ script('vendor/datatables/searchPanes.js') }}
-<script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.0/js/searchPanes.bootstrap4.js"></script>
+
 
 
 {{ script('js/front.js') }}

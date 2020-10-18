@@ -12,6 +12,7 @@ class ArticlesSchema extends Schema {
       table.string('short_text', 500).notNullable()
       table.string('full_text', 1500).notNullable()
       table.string('image', 255).notNullable()
+      table.string('type', 100).notNullable()
       table.timestamps()
     })
   }
